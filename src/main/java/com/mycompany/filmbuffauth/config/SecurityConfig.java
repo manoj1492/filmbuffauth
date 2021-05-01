@@ -1,6 +1,6 @@
 package com.mycompany.filmbuffauth.config;
 
-import java.util.Arrays;
+import java.util.Collections;
 
 import javax.crypto.SecretKey;
 
@@ -8,6 +8,7 @@ import com.mycompany.filmbuffauth.filters.JwtTokenVerifier;
 import com.mycompany.filmbuffauth.service.ApplicationUserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -26,11 +27,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 @Configuration
-@Order(Ordered.HIGHEST_PRECEDENCE)
 @EnableWebSecurity
 
 public class SecurityConfig extends WebSecurityConfigurerAdapter{
@@ -54,7 +54,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
     @Override
     public void configure(HttpSecurity http) throws Exception{
 
-        //http.cors().configurationSource(corsConfigurationSource()); // To allow requests from different origins, by default uses a Bean by the name of corsConfigurationSource
+        http.cors();//.configurationSource(corsConfigurationSource()); // To allow requests from different origins, by default uses a Bean by the name of corsConfigurationSource
         http.csrf().disable(); // To allow POST requests from POSTMAN. Disable CSRF (cross site request forgery)
 
         // No session will be created or used by spring security
@@ -67,7 +67,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
         http.authorizeRequests()
             .antMatchers("/**/login").permitAll()
             .antMatchers("/**/websocket/**").permitAll()
-            .antMatchers("/**/v1/category/").permitAll()
             .antMatchers("/**/v1/**").hasAuthority("QUIZ_READ");
         
         // Any other request should be authenticated. Order of these configurations is important.
@@ -77,6 +76,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
         http.exceptionHandling().authenticationEntryPoint(new Http403ForbiddenEntryPoint());
     }
 
+    @Bean
+    public FilterRegistrationBean<CorsFilter> simpleCorsFilter() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        config.setAllowedOrigins(Collections.singletonList("*"));
+        config.setAllowedMethods(Collections.singletonList("*"));
+        config.setAllowedHeaders(Collections.singletonList("*"));
+        source.registerCorsConfiguration("/**", config);
+        FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<>(new CorsFilter(source));
+        bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
+        return bean;
+    }
+
+    /* @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList("*"));// Allowed all origins
@@ -86,13 +100,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
-    }
+    } */
 
     @Override
     public void configure(WebSecurity web) throws Exception {
         // Allow eureka client to be accessed without authentication
-        web.ignoring().antMatchers("/*/")//
-                .antMatchers("/eureka/**")//
+        web.ignoring()
+                .antMatchers("/eureka/**")
+                .antMatchers("/**/login")
                 .antMatchers(HttpMethod.OPTIONS, "/**"); // Request type options should be allowed.
     }
 
