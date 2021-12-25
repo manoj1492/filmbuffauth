@@ -1,47 +1,58 @@
 package com.mycompany.filmbuffauth.controller;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDate;
+import java.util.Date;
 
-import com.mycompany.filmbuffauth.model.AuthResponse;
-import com.mycompany.filmbuffauth.model.LoginRequest;
-import com.mycompany.filmbuffauth.model.Response;
-import com.mycompany.filmbuffauth.service.LoginService;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
-@RequestMapping("/auth")
+import com.mycompany.filmbuffauth.config.JwtConfig;
+import com.mycompany.filmbuffauth.model.AuthResponse;
+import com.mycompany.filmbuffauth.model.LoginRequest;
+import com.mycompany.filmbuffauth.model.Message;
+import com.mycompany.filmbuffauth.service.ApplicationUserService;
+
+import lombok.AllArgsConstructor;
+import reactor.core.publisher.Mono;
+
+@AllArgsConstructor
+@RestController
+@RequestMapping(value = "/auth")
 public class LoginController {
 
-    @Autowired
-    private LoginService loginService;
+	private JwtConfig jwtConfig;
+    private ApplicationUserService userService;
+	private PasswordEncoder passwordEncoder;
 
-    @CrossOrigin("*")
+    private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
+
     @PostMapping("/login")
     @ResponseBody
-    public ResponseEntity<Response> login(@RequestBody LoginRequest loginRequest) {
-        AuthResponse authResponse = loginService.login(loginRequest.getEmail(),loginRequest.getPassword());
-        HttpHeaders headers = new HttpHeaders();
-        List<String> headerlist = new ArrayList<>();
-        List<String> exposeList = new ArrayList<>();
-        headerlist.add("Content-Type");
-        headerlist.add(" Accept");
-        headerlist.add("X-Requested-With");
-        headerlist.add("Authorization");
-        headers.setAccessControlAllowHeaders(headerlist);
-        exposeList.add("Authorization");
-        headers.setAccessControlExposeHeaders(exposeList);
-        headers.set("Authorization", authResponse.getIdToken());
-        return ResponseEntity.status(HttpStatus.CREATED).headers(headers).body(new Response(authResponse));
+    public Mono <ResponseEntity<AuthResponse>> login(@RequestBody LoginRequest loginRequest) {
+        logger.info("Start: login");
+        Date expirationDate = java.sql.Date.valueOf(LocalDate.now().plusDays(jwtConfig.getExpirationTime()));
+        return userService.findByUsername(loginRequest.getEmail())
+                .filter(userDetails -> {
+                		boolean isPasswordCorrect = passwordEncoder.matches(loginRequest.getPassword(), userDetails.getPassword());
+                		return isPasswordCorrect;
+                	})
+                .map(userDetails -> ResponseEntity.ok(new AuthResponse(jwtConfig.generateToken(userDetails), expirationDate)))
+                .switchIfEmpty(Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()));
+    }
+
+    @GetMapping("/dummy")
+    public Mono<ResponseEntity<Message>> dummyUrl(){
+    	return Mono.just(ResponseEntity.ok(new Message("hello")));
+
     }
 }
