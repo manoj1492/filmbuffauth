@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.mycompany.filmbuffauth.dao.ApplicationUserRepository;
 import com.mycompany.filmbuffauth.model.ApplicationUser;
-import com.mycompany.filmbuffauth.model.User;
+import com.mycompany.filmbuffauth.model.Users;
 
 import reactor.core.publisher.Mono;
 
@@ -24,7 +24,7 @@ public class ApplicationUserService implements ReactiveUserDetailsService {
 
 	@Override
 	public Mono<UserDetails> findByUsername(String username) {
-		User user = applicationUserRepository.findByEmail(username)
+		Users user = applicationUserRepository.findByEmail(username)
 	            .orElseThrow( () -> new UsernameNotFoundException(String.format("Username %s not found", username)));
 	        
 	        return Mono.just(new ApplicationUser(user));
