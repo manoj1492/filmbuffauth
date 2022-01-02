@@ -12,6 +12,8 @@ spring:
     #url: jdbc:mysql://localhost:3306/filmbuff
     #username: root
     #password: password
+  jpa:
+    show-sql: true
   main:
     web-application-type: reactive
     allow-bean-definition-overriding: true
