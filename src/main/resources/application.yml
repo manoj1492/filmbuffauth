@@ -6,9 +6,9 @@ spring:
   profiles:
     active: dev
   datasource:
-    url: jdbc:postgres://ec2-54-162-211-113.compute-1.amazonaws.com:5432/filmbuff?autosave=always
-    username: geeprbmjdqvuih
-    password: 5b12ed315e57f871a4d63cae52254925a984632d65fff7b6d9b2bf452834f3b7
+    url: jdbc:postgres://ec2-34-236-87-247.compute-1.amazonaws.com:5432/dfoemj05v7elt6?autosave=always
+    username: iebmmzhelyvrge
+    password: 2c06a89d70b4878bfaa4278e9ff9888bd885b234d43381780eb21bedab7158a0
     #url: jdbc:mysql://localhost:3306/filmbuff
     #username: root
     #password: password
