@@ -20,7 +20,7 @@ public class RouteConfig {
 					.filters(f -> f
 							.rewritePath("/api", "")
 							.setResponseHeader("Access-Control-Allow-Credentials", "true")
-							.setResponseHeader("Access-Control-Allow-Origin", "http://localhost:4200")
+							.setResponseHeader("Access-Control-Allow-Origin", "https://filmbuff-client.herokuapp.com/")
 							//.removeResponseHeader("Access-Control-Allow-Origin")
 							)
 					.uri("lb://filmbuff-main"))
@@ -29,7 +29,7 @@ public class RouteConfig {
 					.filters(f -> f
 							.rewritePath("/api", "")
 							.setResponseHeader("Access-Control-Allow-Credentials", "true")
-							.setResponseHeader("Access-Control-Allow-Origin", "http://localhost:4200")
+							.setResponseHeader("Access-Control-Allow-Origin", "https://filmbuff-client.herokuapp.com/")
 							)
 					.uri("lb://filmbuff-main"))
 				.build();
