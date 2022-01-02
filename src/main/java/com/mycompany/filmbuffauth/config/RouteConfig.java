@@ -13,7 +13,9 @@ public class RouteConfig {
 		return builder.routes()
 				.route("path_route", r -> 
 					r.path("/api/v1/**")
-					.filters(f -> f.rewritePath("/api", ""))
+					.filters(f -> f
+							.rewritePath("/api", "")
+							.setResponseHeader("Access-Control-Allow-Origin", "https://filmbuff-client.herokuapp.com/"))
 					.uri("lb://filmbuff-main"))
 				.route("websocket_sockjs_route", r -> 
 					r.path("/api/websocket/info/**")
