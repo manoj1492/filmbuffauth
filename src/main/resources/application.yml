@@ -30,4 +30,6 @@ eureka:
     fetch-registry: true
     service-url:
       defaultZone:  https://filmbuff-discovery.herokuapp.com/eureka
+      non-secure-port: 80
+      secure-port: 443
       
