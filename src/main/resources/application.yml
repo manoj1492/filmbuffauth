@@ -1,5 +1,5 @@
-server:
-  port: 8010
+#server:
+#  port: 8010
 spring:
   application:
     name: gateway-service
@@ -24,8 +24,8 @@ spring:
           enabled: true
 eureka:
   instance:
-    non-secure-port-enabled: true
-    secure-port-enabled: false
+    non-secure-port-enabled: false
+    secure-port-enabled: true
     non-secure-port: 80
     secure-port: 443
 #    hostname: localhost
@@ -33,4 +33,4 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone:  http://filmbuff-discovery.herokuapp.com/eureka
+      defaultZone:  https://filmbuff-discovery.herokuapp.com/eureka
