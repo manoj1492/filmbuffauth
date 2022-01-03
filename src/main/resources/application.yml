@@ -23,13 +23,12 @@ spring:
         locator:
           enabled: true
 eureka:
-#  instance:
+  instance:
+    non-secure-port-enabled: false
+    secure-port-enabled: true
 #    hostname: localhost
   client:
     register-with-eureka: true
     fetch-registry: true
     service-url:
       defaultZone:  https://filmbuff-discovery.herokuapp.com/eureka
-      non-secure-port: 80
-      secure-port: 443
-      
