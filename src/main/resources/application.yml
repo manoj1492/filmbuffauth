@@ -26,9 +26,11 @@ eureka:
   instance:
     non-secure-port-enabled: true
     secure-port-enabled: false
+    non-secure-port: 80
+    secure-port: 443
 #    hostname: localhost
   client:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone:  https://filmbuff-discovery.herokuapp.com/eureka
+      defaultZone:  http://filmbuff-discovery.herokuapp.com/eureka
