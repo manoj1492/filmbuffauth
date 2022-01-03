@@ -24,8 +24,8 @@ spring:
           enabled: true
 eureka:
   instance:
-    non-secure-port-enabled: false
-    secure-port-enabled: true
+    non-secure-port-enabled: true
+    secure-port-enabled: false
 #    hostname: localhost
   client:
     register-with-eureka: true
