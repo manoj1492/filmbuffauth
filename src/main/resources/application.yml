@@ -28,7 +28,7 @@ eureka:
     secure-port-enabled: true
     non-secure-port: 80
     secure-port: 443
-#    hostname: localhost
+    hostname: filmbuff-auth.herokuapp.com
   client:
     register-with-eureka: true
     fetch-registry: true
